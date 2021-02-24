@@ -35,8 +35,6 @@ func (h HTTP) createNewHttpOnlyCookie(auth auth.AuthenticationToken) *http.Cooki
 	cookie.Value = auth.RefreshToken
 	cookie.HttpOnly = true
 	cookie.Path = "/"
-	cookie.Secure = true
-	cookie.SameSite = 4
 	cookie.Expires = time.Now().Add(24 * time.Hour * time.Duration(h.refreshTokenExpiry))
 	return cookie
 }
@@ -47,8 +45,6 @@ func (h HTTP) deleteHttpOnlyCookie() *http.Cookie {
 	cookie.Value = ""
 	cookie.HttpOnly = true
 	cookie.Path = "/"
-	cookie.Secure = true
-	cookie.SameSite = 4
 	cookie.Expires = time.Now().Add(-1 * time.Hour)
 	cookie.MaxAge = -1
 	return cookie

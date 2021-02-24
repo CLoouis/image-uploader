@@ -45,11 +45,11 @@ func Start(cfg *config.Configuration) error {
 	// init user component
 	userCollection := db.Collection("user")
 	userRepository := userRepository.NewUserRepositoryImpl(userCollection)
-	userService := userService.NewUserServiceImpl(userRepository, time.Duration(cfg.Database.Timeout))
+	userService := userService.NewUserServiceImpl(userRepository, time.Duration(cfg.Database.Timeout)*time.Second)
 	userTransport.NewHTTP(userService, e.Group("/user"), authMw)
 
 	// init auth component
-	authService := authService.NewAuthService(userRepository, jwtUtl, time.Duration(cfg.Database.Timeout))
+	authService := authService.NewAuthService(userRepository, jwtUtl, time.Duration(cfg.Database.Timeout)*time.Second)
 	authTransport.NewHTTP(authService, cfg.Server.CookieName, cfg.JWT.RefreshTokenExpiry, e)
 
 	server.Start(e, cfg)

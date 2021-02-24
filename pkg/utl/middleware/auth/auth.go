@@ -23,7 +23,6 @@ func Middleware(tokenParser TokenParser) echo.MiddlewareFunc {
 			claims := token.Claims.(jwt.MapClaims)
 
 			id := claims["id"].(string)
-			role := claims["role"].(string)
 			exp := time.Unix(int64(claims["exp"].(float64)), 0)
 
 			if exp.Before(time.Now()) {
@@ -31,7 +30,6 @@ func Middleware(tokenParser TokenParser) echo.MiddlewareFunc {
 			}
 
 			c.Set("id", id)
-			c.Set("role", role)
 			return next(c)
 		}
 	}
