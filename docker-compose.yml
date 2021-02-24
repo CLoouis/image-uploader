@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  mongodb:
+    env_file: .env
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME}
+      MONGO_INITDB_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_PASSWORD: ${MONGODB_PASSWORD}
+    ports:
+      - 27017:27017
+    networks:
+      - image_uploader
+
+  server:
+    env_file: .env
+    build: 
+      context: .
+      dockerfile: dockerfile
+    container_name: server
+    depends_on:
+      - mongodb
+    environment:
+      APP_ENV: docker
+      DATABASE_URL: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongodb:27017/${MONGODB_DB_NAME}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_SIGNING_ALGORITHM: ${JWT_SIGNING_ALGORITHM}
+      JWT_ACCESS_TOKEN_EXPIRY: ${JWT_ACCESS_TOKEN_EXPIRY}
+      JWT_REFRESH_TOKEN_EXPIRY: ${JWT_REFRESH_TOKEN_EXPIRY}
+      DB_TIMEOUT: ${DB_TIMEOUT}
+      SALTROUNDS: ${SALTROUNDS}
+      SERVER_PORT: ${SERVER_PORT}
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_DB_NAME: ${MONGODB_DB_NAME}
+      WAIT_HOSTS: mongodb:27017
+      WAIT_BEFORE_HOSTS: 10
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    restart: always
+    networks:
+      - image_uploader
+
+networks:
+  image_uploader:
