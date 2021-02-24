@@ -17,7 +17,7 @@ type (
 func NewHTTP(service user.UserService, r *echo.Group, authMiddleware echo.MiddlewareFunc) {
 	h := HTTP{userService: service}
 
-	r.POST("/user", h.createUser)
+	r.POST("", h.createUser)
 	r.GET("/me", h.getUserInfo, authMiddleware)
 }
 

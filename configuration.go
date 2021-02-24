@@ -16,7 +16,8 @@ type (
 	}
 
 	Server struct {
-		Port string
+		Port       string
+		CookieName string
 	}
 
 	Database struct {
@@ -49,7 +50,8 @@ func Load() (*Configuration, error) {
 
 	return &Configuration{
 		Server: &Server{
-			Port: ":" + getEnv("SERVER_PORT", "8080"),
+			Port:       ":" + getEnv("SERVER_PORT", "8080"),
+			CookieName: getEnv("SERVER_COOKIE_NAME", "auth"),
 		},
 		Database: &Database{
 			URI:     databaseURI,

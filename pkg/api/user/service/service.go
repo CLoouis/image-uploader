@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/CLoouis/image-uploader/pkg/api/user"
 	"github.com/CLoouis/image-uploader/pkg/utl/hash"
-	"time"
 )
 
 type (
@@ -34,13 +35,13 @@ func (u *UserServiceImpl) Create(ctx context.Context, userData user.User) (strin
 	return result, nil
 }
 
-func (u *UserServiceImpl) Me(ctx context.Context) (user.User, error) {
+func (u *UserServiceImpl) Me(ctx context.Context) (user.UserInformation, error) {
 	userID := fmt.Sprintf("%v", ctx.Value("id"))
 
 	userData, err := u.userRepository.FindById(ctx, userID)
 	if err != nil {
-		return user.User{}, err
+		return user.UserInformation{}, err
 	}
 
-	return userData, nil
+	return userData.GetUserInformation(), nil
 }

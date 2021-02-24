@@ -42,3 +42,13 @@ func (u *UserRepositoryImpl) FindById(ctx context.Context, userID string) (user.
 
 	return userData, nil
 }
+
+func (u *UserRepositoryImpl) FindByEmail(ctx context.Context, email string) (user.User, error) {
+	var userData user.User
+	err := u.userCollection.FindOne(ctx, bson.M{"email": email}).Decode(&userData)
+	if err != nil {
+		return user.User{}, err
+	}
+
+	return userData, nil
+}
