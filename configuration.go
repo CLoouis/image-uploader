@@ -10,9 +10,10 @@ import (
 
 type (
 	Configuration struct {
-		Server   *Server
-		Database *Database
-		JWT      *JWT
+		Server       *Server
+		Database     *Database
+		JWT          *JWT
+		CloudStorage *AWS
 	}
 
 	Server struct {
@@ -31,6 +32,13 @@ type (
 		SigningAlgorithm   string
 		AccessTokenExpiry  int
 		RefreshTokenExpiry int
+	}
+
+	AWS struct {
+		AccessKeyId     string
+		SecretAccessKey string
+		S3Region        string
+		S3Bucket        string
 	}
 )
 
@@ -63,6 +71,12 @@ func Load() (*Configuration, error) {
 			SigningAlgorithm:   getEnv("JWT_SIGNING_ALGORITHM", ""),
 			AccessTokenExpiry:  accessTokenExpiry,
 			RefreshTokenExpiry: refreshTokenExpiry,
+		},
+		CloudStorage: &AWS{
+			AccessKeyId:     getEnv("AWS_ACCESS_KEY_ID", ""),
+			SecretAccessKey: getEnv("AWS_SECRET_ACCESS_KEY", ""),
+			S3Region:        getEnv("AWS_S3_REGION", ""),
+			S3Bucket:        getEnv("AWS_S3_BUCKET", ""),
 		},
 	}, nil
 }

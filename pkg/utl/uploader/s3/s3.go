@@ -38,9 +38,8 @@ func NewS3Uploader(id, region, key, bucket, token string) uploader.Uploader {
 
 func (s S3Uploader) GetPresignUploadUrl(fileName string) (string, error) {
 	request, _ := s.awsService.PutObjectRequest(&s3.PutObjectInput{
-		Bucket:        aws.String(s.bucket),
-		Key:           aws.String(fileName),
-		ContentLength: aws.Int64(5242880),
+		Bucket: aws.String(s.bucket),
+		Key:    aws.String(fileName),
 	})
 
 	url, err := request.Presign(3 * time.Minute)
