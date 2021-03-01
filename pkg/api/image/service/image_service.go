@@ -84,6 +84,31 @@ func (svc ImageServiceImpl) GetImageByFileName(c context.Context, fileName strin
 	return result, nil
 }
 
-func (svc ImageServiceImpl) GetImageByUserId(c context.Context, userId string) (image.ImageResponse, error) {
-	panic("")
+func (svc ImageServiceImpl) GetImageByUserId(c context.Context, userId string) ([]image.ImageResponse, error) {
+	ctx, cancel := context.WithTimeout(c, svc.timeout)
+	defer cancel()
+
+	listOfUserImage, err := svc.imageRepository.GetImageMetadataByUserId(ctx, userId)
+	if err != nil {
+		return []image.ImageResponse{}, err
+	}
+
+	listOfImageResponse := []image.ImageResponse{}
+	for _, imageData := range listOfUserImage {
+		url, err := svc.uploader.GetPresignFetchUrl(imageData.FileName)
+		if err != nil {
+			break
+		}
+
+		result := image.ImageResponse{
+			Id:        imageData.Id,
+			URL:       url,
+			UserId:    imageData.UserId,
+			Timestamp: imageData.Timestamp,
+		}
+
+		listOfImageResponse = append(listOfImageResponse, result)
+	}
+
+	return listOfImageResponse, nil
 }

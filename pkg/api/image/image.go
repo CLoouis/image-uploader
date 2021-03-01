@@ -30,13 +30,13 @@ type (
 	ImageRepository interface {
 		SaveImageMetadata(context.Context, Image) error
 		GetImageMetadataByFileName(context.Context, string) (Image, error)
-		GetImageMetadataByUserId(context.Context, string) (Image, error)
+		GetImageMetadataByUserId(context.Context, string) ([]Image, error)
 	}
 
 	ImageService interface {
 		SaveImageMetadata(context.Context, Image) error
 		HandleGetPresignUploadUrlRequest(context.Context) (URLResponse, error)
 		GetImageByFileName(context.Context, string) (ImageResponse, error)
-		GetImageByUserId(context.Context, string) (ImageResponse, error)
+		GetImageByUserId(context.Context, string) ([]ImageResponse, error)
 	}
 )

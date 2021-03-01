@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/CLoouis/image-uploader/pkg/api/image"
 	"go.mongodb.org/mongo-driver/bson"
@@ -37,6 +38,30 @@ func (i ImageRepositoryImpl) GetImageMetadataByFileName(c context.Context, fileN
 	return imageData, nil
 }
 
-func (i ImageRepositoryImpl) GetImageMetadataByUserId(c context.Context, userId string) (image.Image, error) {
-	panic("implement me")
+func (i ImageRepositoryImpl) GetImageMetadataByUserId(c context.Context, userId string) ([]image.Image, error) {
+	var listOfImage []image.Image
+	cursor, err := i.imageCollection.Find(c, bson.M{"user_id": userId})
+	if err != nil {
+		return []image.Image{}, err
+	}
+
+	for cursor.Next(c) {
+		var imageData image.Image
+		if err = cursor.Decode(&imageData); err != nil {
+			return listOfImage, err
+		}
+
+		listOfImage = append(listOfImage, imageData)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return listOfImage, err
+	}
+
+	cursor.Close(c)
+	if len(listOfImage) == 0 {
+		return listOfImage, errors.New("not found")
+	}
+
+	return listOfImage, nil
 }

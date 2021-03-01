@@ -2,6 +2,7 @@ package transport
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/CLoouis/image-uploader/pkg/api/image"
@@ -18,6 +19,7 @@ func NewHTTP(service image.ImageService, r *echo.Group) {
 	h := HTTP{imageService: service}
 
 	r.POST("", h.saveImage)
+	r.GET("", h.getUserImage)
 	r.GET("/url", h.getUrl)
 	r.GET("/:file_name", h.getImageByFileName)
 }
@@ -35,6 +37,16 @@ func (h *HTTP) saveImage(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusOK)
+}
+
+func (h *HTTP) getUserImage(c echo.Context) error {
+	userId := fmt.Sprintf("%v", c.Get("id"))
+	result, err := h.imageService.GetImageByUserId(c.Request().Context(), userId)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, result)
 }
 
 func (h *HTTP) getUrl(c echo.Context) error {
